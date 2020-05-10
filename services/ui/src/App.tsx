@@ -39,13 +39,15 @@ export function App() {
     const json = await apiResponse.json();
 
     if (json.success) {
+      const event: Event = json.data;
+
       setEventsState([
         ...eventsState,
         {
-          id: json.id,
+          id: event.id,
           mutationType,
-          createdAt: new Date(),
-          applied: false,
+          createdAt: event.createdAt,
+          applied: event.applied,
         },
       ]);
     }
