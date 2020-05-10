@@ -10,6 +10,7 @@ import {
 } from "./lib/queries";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { CREATE_EVENT_MUTATION } from "./lib/mutations";
+import "./App.sass";
 
 export function App() {
   // Queries
@@ -32,17 +33,23 @@ export function App() {
   const [eventsState, setEventsState] = useState<Event[]>([]);
 
   const createEvent = async (mutationType: MutationType) => {
-    await createEventMutation({ variables: { mutationType } });
+    try {
+      await createEventMutation({ variables: { mutationType } });
+    } catch (e) {
+      console.error(e);
+    }
 
-    setEventsState([
-      ...eventsState,
-      {
-        id: data.id,
-        mutationType,
-        createdAt: data.createdAt,
-        applied: data.applied,
-      },
-    ]);
+    if (data) {
+      setEventsState([
+        ...eventsState,
+        {
+          id: data.id,
+          mutationType,
+          createdAt: data.createdAt,
+          applied: data.applied,
+        },
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -54,16 +61,7 @@ export function App() {
 
   if (isFindAllEventsQueryLoading || isFindStatisticByIdQueryLoading) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#272c34",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div className="app-container loader">
         <CircularProgress color="primary" />
         <span>Loading data...</span>
       </div>
@@ -72,66 +70,28 @@ export function App() {
 
   if (findAllEventsQueryHasError || findStatisticByIdQueryHasError) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#272c34",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div className="app-container error">
         <span>An error has occurred :( Please try again!</span>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        height: "100vh",
-      }}
-    >
-      <Grid container spacing={1} style={{ height: "100%" }}>
+    <div className="app-container">
+      <Grid container spacing={1} className="grid">
         <Grid item xs={8}>
-          <div
-            style={{
-              height: "100%",
-              padding: "5px",
-              backgroundColor: "#272c34",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                width: "300px",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
+          <div className="grid__item left">
+            <div className="counter">
               <IconButton
-                style={{
-                  color: "#fff",
-                  backgroundColor: "#1976d2",
-                }}
+                className="button"
                 aria-label="remove"
                 onClick={() => createEvent(MutationType.SUBTRACTION)}
               >
                 <RemoveIcon />
               </IconButton>
-              <span style={{ color: "#fff", fontSize: "22px" }}>
-                {totalState}
-              </span>
+              <span className="total">{totalState}</span>
               <IconButton
-                style={{
-                  color: "#fff",
-                  backgroundColor: "#1976d2",
-                }}
+                className="button"
                 aria-label="add"
                 onClick={() => createEvent(MutationType.ADDITION)}
               >
@@ -141,17 +101,11 @@ export function App() {
           </div>
         </Grid>
         <Grid item xs={4}>
-          <div
-            style={{
-              height: "100%",
-              backgroundColor: "#272c34",
-              padding: "5px",
-            }}
-          >
+          <div className="grid__item right">
             {!eventsState.length ? (
               <span>There are no events yet.</span>
             ) : (
-              <ul style={{ listStyle: "none" }}>
+              <ul>
                 {eventsState.map((event, index) => (
                   <li
                     style={{ color: event.applied ? "green" : "red" }}
