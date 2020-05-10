@@ -4,70 +4,59 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import { MutationType } from "./models/mutationType";
 import { CircularProgress, IconButton, Grid } from "@material-ui/core";
 import { Event } from "./models/event";
-import { API_URL } from "./lib/constants";
+import {
+  FIND_ALL_EVENTS_QUERY,
+  FIND_STATISTIC_BY_ID_QUERY,
+} from "./lib/queries";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { CREATE_EVENT_MUTATION } from "./lib/mutations";
 
 export function App() {
-  const [isLoadingState, setIsLoadingState] = useState<boolean>(false);
-  const [hasErrorState, setHasErrorState] = useState<boolean>(false);
+  // Queries
+  const {
+    loading: isFindAllEventsQueryLoading,
+    error: findAllEventsQueryHasError,
+    data: events,
+  } = useQuery(FIND_ALL_EVENTS_QUERY);
+  const {
+    loading: isFindStatisticByIdQueryLoading,
+    error: findStatisticByIdQueryHasError,
+    data: statistic,
+  } = useQuery(FIND_STATISTIC_BY_ID_QUERY);
+
+  // Mutations
+  const [createEventMutation, { data }] = useMutation(CREATE_EVENT_MUTATION);
+
+  // Other states
   const [totalState, setTotalState] = useState<number>(0);
   const [eventsState, setEventsState] = useState<Event[]>([]);
 
-  const getTotal = async () => {
-    try {
-      setIsLoadingState(true);
-
-      const apiResponse = await fetch(`${API_URL}/statistics`, {
-        method: "GET",
-      });
-      const json = await apiResponse.json();
-
-      setTotalState(json.data);
-    } catch (e) {
-      console.error(e);
-      setHasErrorState(true);
-    } finally {
-      setIsLoadingState(false);
-    }
-  };
-
-  const getEvents = async () => {};
-
   const createEvent = async (mutationType: MutationType) => {
-    const apiResponse = await fetch(`${API_URL}/events`, {
-      method: "POST",
-      body: JSON.stringify({
+    await createEventMutation({ variables: { mutationType } });
+
+    setEventsState([
+      ...eventsState,
+      {
+        id: data.id,
         mutationType,
-      }),
-    });
-    const json = await apiResponse.json();
-
-    if (json.success) {
-      const event: Event = json.data;
-
-      setEventsState([
-        ...eventsState,
-        {
-          id: event.id,
-          mutationType,
-          createdAt: event.createdAt,
-          applied: event.applied,
-        },
-      ]);
-    }
+        createdAt: data.createdAt,
+        applied: data.applied,
+      },
+    ]);
   };
 
   useEffect(() => {
-    getTotal();
-    getEvents();
-  }, []);
+    setTotalState(statistic.total);
+    setEventsState(events);
+  }, [events, statistic]);
 
-  // if (isLoadingState) {
-  //   return <CircularProgress />;
-  // }
+  if (isFindAllEventsQueryLoading || isFindStatisticByIdQueryLoading) {
+    return <CircularProgress />;
+  }
 
-  // if (hasErrorState) {
-  //   return <span>An error has occurred. Please try again</span>;
-  // }
+  if (findAllEventsQueryHasError || findStatisticByIdQueryHasError) {
+    return <span>An error has occurred. Please try again</span>;
+  }
 
   return (
     <div

@@ -10,7 +10,7 @@ export class StatisticResolver {
   constructor(private readonly statisticService: StatisticService) {}
 
   @Query(returns => StatisticEntity)
-  getStatistic() {
+  findStatisticById() {
     return this.statisticService.findById(STATISTIC_ID);
   }
 }

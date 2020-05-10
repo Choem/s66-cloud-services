@@ -8,7 +8,7 @@ export class EventResolver {
 
   @Mutation(returns => EventEntity)
   async createEvent(
-    @Args() createEventInput: CreateEventInput,
+    @Args('input') createEventInput: CreateEventInput,
   ): Promise<EventEntity> {
     return await this.eventService.create(createEventInput);
   }
