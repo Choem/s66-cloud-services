@@ -3,18 +3,14 @@ import {
   StatisticEntity,
   STATISTIC_ID,
 } from '../../database/entities/statistic.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { StatisticService } from './statistic.service';
 
 @Resolver(StatisticEntity)
 export class StatisticResolver {
-  constructor(
-    @InjectRepository(StatisticEntity)
-    private readonly statisticRepository: Repository<StatisticEntity>,
-  ) {}
+  constructor(private readonly statisticService: StatisticService) {}
 
   @Query(returns => StatisticEntity)
   getStatistic() {
-    return this.statisticRepository.findOne({ where: { id: STATISTIC_ID } });
+    return this.statisticService.findById(STATISTIC_ID);
   }
 }

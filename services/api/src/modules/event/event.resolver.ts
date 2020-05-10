@@ -1,23 +1,20 @@
-import { Resolver, Query, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { EventEntity } from '../../database/entities/event.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateEventInput } from './inputs/createEventInput';
 
 @Resolver(EventEntity)
 export class EventResolver {
-  constructor(
-    @InjectRepository(EventEntity)
-    private readonly eventRepository: Repository<EventEntity>,
-  ) {}
+  constructor(private readonly eventService) {}
 
   @Mutation(returns => EventEntity)
-  async createEvent(createEventInput: CreateEventInput): Promise<EventEntity> {
-    return this.eventRepository.save(createEventInput);
+  async createEvent(
+    @Args() createEventInput: CreateEventInput,
+  ): Promise<EventEntity> {
+    return await this.eventService.create(createEventInput);
   }
 
   @Query(returns => [EventEntity])
   async findAllEvents(): Promise<EventEntity[]> {
-    return await this.eventRepository.find({ order: { createdAt: 'DESC' } });
+    return await this.eventService.findAll();
   }
 }

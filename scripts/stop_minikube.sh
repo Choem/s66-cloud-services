@@ -1,1 +1,1 @@
-minikube stop -p s66-security-by-design
+minikube stop -p s66-cloud-services
