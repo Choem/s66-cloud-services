@@ -5,7 +5,7 @@ import { MutationType } from "./models/mutationType";
 import { CircularProgress, IconButton, Grid } from "@material-ui/core";
 import { Event } from "./models/event";
 
-function App() {
+export function App() {
   const [isLoadingState, setIsLoadingState] = useState<boolean>(false);
   const [hasErrorState, setHasErrorState] = useState<boolean>(false);
   const [totalState, setTotalState] = useState<number>(0);
@@ -145,5 +145,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
