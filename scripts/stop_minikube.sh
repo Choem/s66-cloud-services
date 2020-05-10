@@ -1,0 +1,1 @@
+minikube stop -p s66-security-by-design
