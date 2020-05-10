@@ -46,16 +46,44 @@ export function App() {
   };
 
   useEffect(() => {
-    setTotalState(statistic.total);
-    setEventsState(events);
-  }, [events, statistic]);
+    if (statistic && events) {
+      setTotalState(statistic.total);
+      setEventsState(events);
+    }
+  }, [statistic, events]);
 
   if (isFindAllEventsQueryLoading || isFindStatisticByIdQueryLoading) {
-    return <CircularProgress />;
+    return (
+      <div
+        style={{
+          height: "100vh",
+          backgroundColor: "#272c34",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress color="primary" />
+        <span>Loading data...</span>
+      </div>
+    );
   }
 
   if (findAllEventsQueryHasError || findStatisticByIdQueryHasError) {
-    return <span>An error has occurred. Please try again</span>;
+    return (
+      <div
+        style={{
+          height: "100vh",
+          backgroundColor: "#272c34",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span>An error has occurred :( Please try again!</span>
+      </div>
+    );
   }
 
   return (
