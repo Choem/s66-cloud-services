@@ -4,6 +4,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import { MutationType } from "./models/mutationType";
 import { CircularProgress, IconButton, Grid } from "@material-ui/core";
 import { Event } from "./models/event";
+import { API_URL } from "./lib/constants";
 
 export function App() {
   const [isLoadingState, setIsLoadingState] = useState<boolean>(false);
@@ -15,7 +16,7 @@ export function App() {
     try {
       setIsLoadingState(true);
 
-      const apiResponse = await fetch(`/statistics`, {
+      const apiResponse = await fetch(`${API_URL}/statistics`, {
         method: "GET",
       });
       const json = await apiResponse.json();
@@ -29,8 +30,10 @@ export function App() {
     }
   };
 
+  const getEvents = async () => {};
+
   const createEvent = async (mutationType: MutationType) => {
-    const apiResponse = await fetch(`/statistics`, {
+    const apiResponse = await fetch(`${API_URL}/events`, {
       method: "POST",
       body: JSON.stringify({
         mutationType,
@@ -55,6 +58,7 @@ export function App() {
 
   useEffect(() => {
     getTotal();
+    getEvents();
   }, []);
 
   // if (isLoadingState) {
