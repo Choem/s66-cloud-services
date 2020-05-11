@@ -1,7 +1,7 @@
 apiVersion: kubedb.com/v1alpha1
 kind: MySQL
 metadata:
-  name: {{ .Values.name }}
+  name: mysql
 spec:
   version: "8.0-v2"
   replicas: 1
@@ -13,6 +13,8 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: DoNotTerminate
+  terminationPolicy: "Delete"
   databaseSecret:
-    secretName: mysql-auth  
+    secretName: mysql-auth 
+  args:
+    - --default-authentication-plugin=mysql_native_password
