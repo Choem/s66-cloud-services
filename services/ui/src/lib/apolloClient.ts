@@ -1,7 +1,6 @@
 import { split } from "apollo-link";
 import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
-import { API_URL } from "./constants";
 import { getMainDefinition } from "apollo-utilities";
 import { ApolloClient } from "apollo-boost";
 import { InMemoryCache } from "apollo-cache-inmemory";

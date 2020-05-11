@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { StatisticModule } from './statistic/statistic.module';
+import { PUB_SUB } from '../lib/constants';
+import { PubSub } from 'graphql-subscriptions';
 
 const routes: Routes = [
   {
@@ -32,6 +34,12 @@ const routes: Routes = [
       useFactory: (configService: ConfigService) => configService.GraphQLConfig,
       inject: [ConfigService],
     }),
+  ],
+  providers: [
+    {
+      provide: PUB_SUB,
+      useValue: new PubSub(),
+    },
   ],
 })
 export class RootModule {}
