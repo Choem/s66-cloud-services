@@ -14,7 +14,7 @@ export class ConfigService {
     this.env = this.validateInput(process.env);
   }
 
-  public get TypeORMConfig() {
+  public get TypeORMConfig(): TypeOrmModuleOptions {
     const typeOrmConfig: any = {
       type: this.env.DB_DRIVER,
       host: this.env.DB_HOST,
@@ -30,13 +30,19 @@ export class ConfigService {
     return typeOrmConfig as TypeOrmModuleOptions;
   }
 
-  public get GraphQLConfig() {
-    const graphQlConfig: any = {
+  public get GraphQLConfig(): GqlModuleOptions {
+    return {
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
-    };
-
-    return graphQlConfig as GqlModuleOptions;
+      playground: {
+        endpoint: '/api/graphql',
+        subscriptionEndpoint: '/api/graphql/subscriptions',
+      },
+      subscriptions: {
+        path: '/graphql/subscriptions',
+        keepAlive: 10000,
+      },
+    } as GqlModuleOptions;
   }
 
   private validateInput(envConfig: any): EnvConfig {

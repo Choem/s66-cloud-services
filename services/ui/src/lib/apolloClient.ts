@@ -7,11 +7,13 @@ import { ApolloClient } from "apollo-boost";
 import { InMemoryCache } from "apollo-cache-inmemory";
 
 const httpLink = new HttpLink({
-  uri: `${API_URL}:3000/graphql`,
+  uri: "/api/graphql",
 });
 
 const websocketLink = new WebSocketLink({
-  uri: `${API_URL}:5000/`,
+  uri: `${window.location.protocol.startsWith("https") ? "wss" : "ws"}://${
+    window.location.hostname
+  }/api/graphql/subscriptions`,
   options: {
     reconnect: true,
   },
