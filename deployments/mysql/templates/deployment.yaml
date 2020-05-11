@@ -1,0 +1,18 @@
+apiVersion: kubedb.com/v1alpha1
+kind: MySQL
+metadata:
+  name: {{ .Values.name }}
+spec:
+  version: "8.0-v2"
+  replicas: 1
+  storageType: Durable
+  storage:
+    storageClassName: "standard"
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: DoNotTerminate
+  databaseSecret:
+    secretName: mysql-auth  
