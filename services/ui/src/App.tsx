@@ -15,6 +15,7 @@ import {
   EVENT_STATUS_CHANGED_SUBSCRIPTION,
   STATISTIC_UPDATED_SUBSCRIPTION,
 } from "./lib/subscriptions";
+import { getEventColor } from "./lib/getEventColor";
 
 export function App() {
   // Queries
@@ -61,7 +62,9 @@ export function App() {
   );
 
   // Mutations
-  const [createEventMutation, { data }] = useMutation(CREATE_EVENT_MUTATION);
+  const [createEventMutation, { data: createdEvent }] = useMutation(
+    CREATE_EVENT_MUTATION
+  );
 
   // Other states
   const [totalState, setTotalState] = useState<number>(0);
@@ -74,14 +77,14 @@ export function App() {
       console.error(e);
     }
 
-    if (data) {
+    if (createdEvent) {
       setEventsState([
         ...eventsState,
         {
-          id: data.id,
+          id: createdEvent.id,
           mutationType,
-          createdAt: data.createdAt,
-          applied: data.applied,
+          createdAt: createdEvent.createdAt,
+          status: createdEvent.status,
         },
       ]);
     }
@@ -143,7 +146,7 @@ export function App() {
               <ul>
                 {eventsState.map((event, index) => (
                   <li
-                    style={{ color: event.applied ? "green" : "red" }}
+                    style={{ color: getEventColor(event.status) }}
                     key={index}
                   >
                     {event.mutationType} - {event.createdAt}

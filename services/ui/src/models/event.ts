@@ -1,8 +1,9 @@
 import { MutationType } from "./mutationType";
+import { EventStatusType } from "./eventStatusType";
 
 export interface Event {
   id: number;
   mutationType: MutationType;
   createdAt: Date;
-  applied: boolean;
+  status: EventStatusType;
 }
