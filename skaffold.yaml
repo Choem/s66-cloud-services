@@ -1,0 +1,19 @@
+apiVersion: skaffold/v2beta3
+kind: Config
+metadata:
+  name: s66-cloud-services
+build:
+  artifacts:
+    - image: s66-cloud-services-api
+      context: services/api
+    - image: s66-cloud-services-ui
+      context: services/ui
+deploy:
+  kubectl:
+    manifests:
+      - deployments/api/templates/deployment.yaml
+      - deployments/api/templates/ingress.yaml
+      - deployments/api/templates/service.yaml
+      - deployments/ui/templates/deployment.yaml
+      - deployments/ui/templates/ingress.yaml
+      - deployments/ui/templates/service.yaml

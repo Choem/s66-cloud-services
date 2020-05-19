@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        image: s66-cloud-services-ui:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
