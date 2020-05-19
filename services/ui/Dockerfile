@@ -16,13 +16,22 @@ WORKDIR /usr/src/app
 COPY --from=modules /usr/ /usr/
 COPY . .
 
+# For dev purposes
+FROM base as dev
+
+ENV PORT=80
+ENV CI=true
+ENV CHOKIDAR_USEPOLLING=true
+
+EXPOSE 80
+
+CMD ["npm", "run", "start"]
+
 # We label our stage as ‘builder’
 FROM base as builder
 
 WORKDIR /usr/src/app
 
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
 RUN npm run build
 
 ### STAGE 2: Setup ###

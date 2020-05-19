@@ -5,9 +5,27 @@ metadata:
 build:
   artifacts:
     - image: s66-cloud-services-api
+      docker:
+        target: dev
       context: services/api
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: s66-cloud-services-ui
       context: services/ui
+      docker:
+        target: dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.tsx"
+            dest: .
+          - src: "src/**/*.sass"
+            dest: .
+  local:
+    push: false
 deploy:
   kubectl:
     manifests:

@@ -56,6 +56,7 @@ export function App() {
     STATISTIC_UPDATED_SUBSCRIPTION,
     {
       onSubscriptionData: ({ subscriptionData: { data } }) => {
+        console.log(data);
         setTotalState(data.total);
       },
     }
