@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { EnvConfig } from './envConfig';
+import {Injectable} from '@nestjs/common';
+import {GqlModuleOptions} from '@nestjs/graphql';
+import {TypeOrmModuleOptions} from '@nestjs/typeorm';
 import * as Joi from 'joi';
-import { EventEntity } from '../../database/entities/event.entity';
-import { StatisticEntity } from '../../database/entities/statistic.entity';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { GqlModuleOptions } from '@nestjs/graphql';
+
+import {EventEntity} from '../../database/entities/event.entity';
+import {StatisticEntity} from '../../database/entities/statistic.entity';
+
+import {EnvConfig} from './envConfig';
 
 @Injectable()
 export class ConfigService {
@@ -48,14 +50,8 @@ export class ConfigService {
   private validateInput(envConfig: any): EnvConfig {
     const envConfigSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-        .valid(['development', 'production'])
-        .default('development'),
-      BASE_HREF: Joi.string()
-        .default('/')
-        .required(),
-      APP_HOST: Joi.string().required(),
-      APP_PORT: Joi.number().default(3333),
-      APP_URL: Joi.string().required(),
+                    .valid(['development', 'production'])
+                    .default('development'),
       DB_DRIVER: Joi.string().required(),
       DB_HOST: Joi.string().required(),
       DB_PORT: Joi.number().required(),
@@ -64,10 +60,10 @@ export class ConfigService {
       DB_NAME: Joi.string().required(),
     });
 
-    const { error, value: validatedEnvConfig } = Joi.validate(
-      envConfig,
-      envConfigSchema,
-      { allowUnknown: true },
+    const {error, value: validatedEnvConfig} = Joi.validate(
+        envConfig,
+        envConfigSchema,
+        {allowUnknown: true},
     );
 
     if (error) {
