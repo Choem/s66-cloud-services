@@ -16,10 +16,6 @@ WORKDIR /usr/src/app
 COPY --from=modules /usr/ /usr/
 COPY . .
 
-# Dev environment
-FROM base as dev
-CMD ["npm", "start"]
-
 # We label our stage as ‘builder’
 FROM base as builder
 

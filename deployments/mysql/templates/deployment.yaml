@@ -13,7 +13,7 @@ spec:
     resources:
       requests:
         storage: 1Gi
-  terminationPolicy: "Delete"
+  terminationPolicy: "Pause"
   databaseSecret:
     secretName: mysql-auth 
   args:

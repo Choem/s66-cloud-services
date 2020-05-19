@@ -2,4 +2,7 @@
 minikube start -p s66-cloud-services --vm-driver=kvm2 
 
 # Enable ingress conrollers
-minikube addons enable ingress
+minikube addons enable ingress -p s66-cloud-services
+
+# Install kubedb
+./scripts/development/install_kubedb.sh
