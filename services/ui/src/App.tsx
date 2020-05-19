@@ -8,9 +8,13 @@ import {
   FIND_ALL_EVENTS_QUERY,
   FIND_STATISTIC_BY_ID_QUERY,
 } from "./lib/queries";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation, useSubscription } from "@apollo/react-hooks";
 import { CREATE_EVENT_MUTATION } from "./lib/mutations";
 import "./App.sass";
+import {
+  EVENT_STATUS_CHANGED_SUBSCRIPTION,
+  STATISTIC_UPDATED_SUBSCRIPTION,
+} from "./lib/subscriptions";
 
 export function App() {
   // Queries
@@ -24,6 +28,37 @@ export function App() {
     error: findStatisticByIdQueryHasError,
     data: statistic,
   } = useQuery(FIND_STATISTIC_BY_ID_QUERY);
+
+  // Subscriptions
+  const { loading: isEventStatusChangedLoading } = useSubscription(
+    EVENT_STATUS_CHANGED_SUBSCRIPTION,
+    {
+      onSubscriptionData: ({ subscriptionData: { data } }) => {
+        setEventsState(
+          eventsState.map((event) => {
+            const foundIndex = data.findIndex(
+              (entry: Event) => entry.id === event.id
+            );
+
+            if (foundIndex !== -1) {
+              return { ...data[foundIndex] };
+            }
+
+            return event;
+          })
+        );
+      },
+    }
+  );
+
+  const { loading: isStatisticUpdatedLoading } = useSubscription(
+    STATISTIC_UPDATED_SUBSCRIPTION,
+    {
+      onSubscriptionData: ({ subscriptionData: { data } }) => {
+        setTotalState(data.total);
+      },
+    }
+  );
 
   // Mutations
   const [createEventMutation, { data }] = useMutation(CREATE_EVENT_MUTATION);
