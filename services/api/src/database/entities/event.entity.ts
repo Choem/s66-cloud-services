@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { MutationType } from '../enums/mutationType';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { EventStatusType } from '../enums/eventStatusType';
 
 @Entity('event')
 @ObjectType()
@@ -26,9 +27,10 @@ export class EventEntity {
   createdAt: Date;
 
   @Column({
-    type: 'tinyint',
-    default: false,
+    name: 'event_status_type',
+    type: 'simple-enum',
+    enum: EventStatusType,
   })
-  @Field()
-  applied: boolean;
+  @Field(type => EventStatusType)
+  eventStatusType: EventStatusType;
 }
