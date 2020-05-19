@@ -1,10 +1,8 @@
-import { NestFactory } from '@nestjs/core';
-import { RootModule } from './modules/root.module';
-import { Connection } from 'typeorm';
-import {
-  StatisticEntity,
-  STATISTIC_ID,
-} from './database/entities/statistic.entity';
+import {NestFactory} from '@nestjs/core';
+import {Connection} from 'typeorm';
+
+import {STATISTIC_ID, StatisticEntity,} from './database/entities/statistic.entity';
+import {RootModule} from './modules/root.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(RootModule);
@@ -13,16 +11,16 @@ async function bootstrap() {
   const connection = await app.resolve(Connection);
 
   console.info('Running migrations...');
-  await connection.runMigrations({ transaction: 'each' });
+  await connection.runMigrations({transaction: 'each'});
   console.info('Migrations done');
 
-  const existingStatisticRow = await connection
-    .createQueryBuilder(StatisticEntity, 'statistic')
-    .where('statistic.id = :id', { id: STATISTIC_ID })
-    .getOne();
+  const existingStatisticRow =
+      await connection.createQueryBuilder(StatisticEntity, 'statistic')
+          .where('statistic.id = :id', {id: STATISTIC_ID})
+          .getOne();
 
   if (!existingStatisticRow) {
-    await connection.manager.save(StatisticEntity, { total: 0 });
+    await connection.manager.save(StatisticEntity, {total: 0});
     console.info('Initial statistic row created');
   }
 

@@ -6,7 +6,7 @@ export const FIND_ALL_EVENTS_QUERY = gql`
       id
       mutationType
       createdAt
-      applied
+      eventStatusType
     }
   }
 `;

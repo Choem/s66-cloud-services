@@ -1,12 +1,13 @@
-import {Injectable} from '@nestjs/common';
-import {GqlModuleOptions} from '@nestjs/graphql';
-import {TypeOrmModuleOptions} from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { GqlModuleOptions } from '@nestjs/graphql';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 
-import {EventEntity} from '../../database/entities/event.entity';
-import {StatisticEntity} from '../../database/entities/statistic.entity';
+import { EventEntity } from '../../database/entities/event.entity';
+import { StatisticEntity } from '../../database/entities/statistic.entity';
+import { Initial1589909366425 } from '../../database/migrations/1589909366425-Initial';
 
-import {EnvConfig} from './envConfig';
+import { EnvConfig } from './envConfig';
 
 @Injectable()
 export class ConfigService {
@@ -26,7 +27,7 @@ export class ConfigService {
       database: this.env.DB_NAME,
       retryAttempts: 3,
       entities: [EventEntity, StatisticEntity],
-      migrations: [],
+      migrations: [Initial1589909366425],
     };
 
     return typeOrmConfig as TypeOrmModuleOptions;
@@ -35,7 +36,7 @@ export class ConfigService {
   public get GraphQLConfig(): GqlModuleOptions {
     return {
       installSubscriptionHandlers: true,
-      autoSchemaFile: true,
+      autoSchemaFile: 'schema.gql',
       playground: {
         endpoint: '/api/graphql',
         subscriptionEndpoint: '/api/graphql/subscriptions',
@@ -50,8 +51,8 @@ export class ConfigService {
   private validateInput(envConfig: any): EnvConfig {
     const envConfigSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-                    .valid(['development', 'production'])
-                    .default('development'),
+        .valid(['development', 'production'])
+        .default('development'),
       DB_DRIVER: Joi.string().required(),
       DB_HOST: Joi.string().required(),
       DB_PORT: Joi.number().required(),
@@ -60,10 +61,10 @@ export class ConfigService {
       DB_NAME: Joi.string().required(),
     });
 
-    const {error, value: validatedEnvConfig} = Joi.validate(
-        envConfig,
-        envConfigSchema,
-        {allowUnknown: true},
+    const { error, value: validatedEnvConfig } = Joi.validate(
+      envConfig,
+      envConfigSchema,
+      { allowUnknown: true },
     );
 
     if (error) {

@@ -6,7 +6,7 @@ export const CREATE_EVENT_MUTATION = gql`
       id
       mutationType
       createdAt
-      applied
+      eventStatusType
     }
   }
 `;

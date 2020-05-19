@@ -7,10 +7,10 @@ module.exports = {
   database: 'data',
   logging: true,
   timezone: 'UTC',
-  entities: ['src/entities/**/**.entity.ts'],
-  migrations: ['src/migrations/**/**.ts'],
+  entities: ['src/database/entities/**/**.entity.ts'],
+  migrations: ['src/database/migrations/**/**.ts'],
   supportBigNumbers: true,
   bigNumberStrings: true,
   extra: {charset: 'utf8mb4_bin'},
-  cli: {migrationsDir: 'src/migrations'}
+  cli: {migrationsDir: 'src/database/migrations'}
 };

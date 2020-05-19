@@ -1,10 +1,11 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { EventEntity } from '../../database/entities/event.entity';
 import { CreateEventInput } from './inputs/createEventInput';
+import { EventService } from './event.service';
 
 @Resolver(EventEntity)
 export class EventResolver {
-  constructor(private readonly eventService) {}
+  constructor(private readonly eventService: EventService) {}
 
   @Mutation(returns => EventEntity)
   async createEvent(

@@ -1,29 +1,19 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { RouterModule, Routes } from 'nest-router';
-import { EventModule } from './event/event.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from './config/config.module';
-import { ConfigService } from './config/config.service';
-import { StatisticModule } from './statistic/statistic.module';
-import { PUB_SUB } from '../lib/constants';
 import { PubSub } from 'graphql-subscriptions';
 
-const routes: Routes = [
-  {
-    path: '/events',
-    module: EventModule,
-  },
-  {
-    path: '/statistics',
-    module: StatisticModule,
-  },
-];
+import { PUB_SUB } from '../lib/constants';
+
+import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+import { EventModule } from './event/event.module';
+import { StatisticModule } from './statistic/statistic.module';
 
 @Module({
   imports: [
     EventModule,
-    RouterModule.forRoutes(routes),
+    StatisticModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => configService.TypeORMConfig,
