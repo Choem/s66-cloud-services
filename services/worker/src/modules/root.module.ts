@@ -28,7 +28,8 @@ import { StatisticModule } from './statistic/statistic.module';
   providers: [
     {
       provide: PUB_SUB,
-      useValue: new PubSub(),
+      useFactory: (configService: ConfigService) => configService.RedisPubSub,
+      inject: [ConfigService],
     },
   ],
 })
