@@ -1,5 +1,4 @@
 import {Args, Mutation, Query, Resolver, Root, Subscription} from '@nestjs/graphql';
-import {EventStatusType} from 'src/database/enums/eventStatusType';
 
 import {EventEntity} from '../../database/entities/event.entity';
 import {Topic} from '../../lib/topic';

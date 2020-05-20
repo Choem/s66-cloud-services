@@ -16,6 +16,10 @@ import {
   STATISTIC_UPDATED_SUBSCRIPTION,
 } from "./lib/subscriptions";
 import { getEventColor } from "./lib/getEventColor";
+import {
+  EventStatusChangedPayload,
+  StatisticUpdatedPayload,
+} from "./lib/payloads";
 
 export function App() {
   // Queries
@@ -31,35 +35,31 @@ export function App() {
   } = useQuery(FIND_STATISTIC_BY_ID_QUERY);
 
   // Subscriptions
-  const { loading: isEventStatusChangedLoading } = useSubscription(
-    EVENT_STATUS_CHANGED_SUBSCRIPTION,
-    {
-      onSubscriptionData: ({ subscriptionData: { data } }) => {
+  const { loading: isEventStatusChangedLoading } = useSubscription<
+    EventStatusChangedPayload
+  >(EVENT_STATUS_CHANGED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
         setEventsState(
-          eventsState.map((event) => {
-            const foundIndex = data.findIndex(
-              (entry: Event) => entry.id === event.id
-            );
-
-            if (foundIndex !== -1) {
-              return { ...data[foundIndex] };
-            }
-
-            return event;
-          })
+          eventsState.map((event) =>
+            event.id === data.id
+              ? { ...event, eventStatusType: data.eventStatusType }
+              : event
+          )
         );
-      },
-    }
-  );
+      }
+    },
+  });
 
-  const { loading: isStatisticUpdatedLoading } = useSubscription(
-    STATISTIC_UPDATED_SUBSCRIPTION,
-    {
-      onSubscriptionData: ({ subscriptionData: { data } }) => {
+  const { loading: isStatisticUpdatedLoading } = useSubscription<
+    StatisticUpdatedPayload
+  >(STATISTIC_UPDATED_SUBSCRIPTION, {
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
         setTotalState(data.total);
-      },
-    }
-  );
+      }
+    },
+  });
 
   // Mutations
   const [createEventMutation, { data: createdEvent }] = useMutation(
