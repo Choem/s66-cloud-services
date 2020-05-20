@@ -1,0 +1,5 @@
+services:
+  api:
+    name: worker-deployment
+  redis:
+    name: worker-subscriptions
