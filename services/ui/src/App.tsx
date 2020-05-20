@@ -77,26 +77,29 @@ export function App() {
     } catch (e) {
       console.error(e);
     }
-
-    if (createdEvent) {
-      setEventsState([
-        ...eventsState,
-        {
-          id: createdEvent.id,
-          mutationType,
-          createdAt: createdEvent.createdAt,
-          status: createdEvent.status,
-        },
-      ]);
-    }
   };
 
   useEffect(() => {
     if (statistic && events) {
-      setTotalState(statistic.total);
-      setEventsState(events);
+      setTotalState(statistic.findStatisticById.total);
+      setEventsState(events.findAllEvents);
     }
   }, [statistic, events]);
+
+  useEffect(() => {
+    if (createdEvent) {
+      const createdEventData = createdEvent.createEvent;
+      setEventsState((prevState) => [
+        {
+          id: createdEventData.id,
+          mutationType: createdEventData.mutationType,
+          createdAt: createdEventData.createdAt,
+          eventStatusType: createdEventData.eventStatusType,
+        },
+        ...prevState,
+      ]);
+    }
+  }, [createdEvent, setEventsState]);
 
   if (isFindAllEventsQueryLoading || isFindStatisticByIdQueryLoading) {
     return (
@@ -141,16 +144,20 @@ export function App() {
         </Grid>
         <Grid item xs={4}>
           <div className="grid__item right">
+            <h2 className="grid__item__title">Events</h2>
             {!eventsState.length ? (
               <span>There are no events yet.</span>
             ) : (
               <ul>
                 {eventsState.map((event, index) => (
                   <li
-                    style={{ color: getEventColor(event.status) }}
+                    style={{
+                      marginBottom: "5px",
+                      color: getEventColor(event.eventStatusType),
+                    }}
                     key={index}
                   >
-                    {event.mutationType} - {event.createdAt}
+                    {index + 1}. {event.mutationType} - {event.createdAt}
                   </li>
                 ))}
               </ul>

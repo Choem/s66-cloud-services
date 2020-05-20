@@ -1,9 +1,9 @@
-import { MutationType } from "./mutationType";
-import { EventStatusType } from "./eventStatusType";
+import {EventStatusType} from './eventStatusType';
+import {MutationType} from './mutationType';
 
 export interface Event {
   id: number;
   mutationType: MutationType;
   createdAt: Date;
-  status: EventStatusType;
+  eventStatusType: EventStatusType;
 }
