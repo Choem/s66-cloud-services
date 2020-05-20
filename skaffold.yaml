@@ -32,6 +32,7 @@ deploy:
       - deployments/api/templates/deployment.yaml
       - deployments/api/templates/ingress.yaml
       - deployments/api/templates/service.yaml
+      - deployments/api/templates/redis.yaml
       - deployments/ui/templates/deployment.yaml
       - deployments/ui/templates/ingress.yaml
       - deployments/ui/templates/service.yaml

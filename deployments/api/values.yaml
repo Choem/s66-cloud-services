@@ -1,2 +1,5 @@
-image:
-  name: api
+services:
+  api:
+    name: api-deployment
+  redis:
+    name: api-subscriptions
