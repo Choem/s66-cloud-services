@@ -7,7 +7,6 @@ import {
 } from './database/entities/statistic.entity';
 import { RootModule } from './modules/root.module';
 import { intializeSubscribers } from './subscribers/initializeSubscribers';
-import { PUB_SUB } from './lib/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(RootModule);
@@ -31,7 +30,6 @@ async function bootstrap() {
 
   await app.listen(3333);
 
-  const pubSub = await app.resolve(PUB_SUB);
-  intializeSubscribers(pubSub);
+  intializeSubscribers();
 }
 bootstrap();

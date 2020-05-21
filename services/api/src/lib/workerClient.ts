@@ -4,30 +4,28 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { ApolloClient } from 'apollo-boost';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-
-const httpLink = new HttpLink({
-  uri: '/worker/graphql',
-});
-
-const websocketLink = new WebSocketLink({
-  uri: `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://${
-    window.location.hostname
-  }/worker/graphql/subscriptions`,
-  options: {
-    reconnect: true,
-  },
-});
+import fetch from 'node-fetch';
+import { OperationDefinitionNode } from 'graphql';
+import ws from 'ws';
 
 const link = split(
   ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    );
+    const { kind, operation } = getMainDefinition(
+      query,
+    ) as OperationDefinitionNode;
+    return kind === 'OperationDefinition' && operation === 'subscription';
   },
-  websocketLink,
-  httpLink,
+  new WebSocketLink({
+    uri: `http://${process.env.WORKER_SERVICE}/graphql/subscriptions`,
+    options: {
+      reconnect: true,
+    },
+    webSocketImpl: ws,
+  }),
+  new HttpLink({
+    uri: `http://${process.env.WORKER_SERVICE}/graphql`,
+    fetch: fetch as any,
+  }),
 );
 
 export const workerClient = new ApolloClient({

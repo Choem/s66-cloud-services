@@ -41,3 +41,5 @@ spec:
                 key: password
           - name: REDIS_SERVICE
             value: api-subscriptions
+          - name: WORKER_SERVICE
+            value: worker-deployment

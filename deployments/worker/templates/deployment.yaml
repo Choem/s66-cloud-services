@@ -44,4 +44,4 @@ spec:
           - name: CRON
             value: '* * * * *'
           - name: BATCH_SIZE
-            value: 10
+            value: '10'

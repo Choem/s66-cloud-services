@@ -6,3 +6,9 @@ minikube addons enable ingress -p s66-cloud-services
 
 # Install kubedb
 ./scripts/development/install_kubedb.sh
+
+# Add required secrets
+./scripts/development/add_secrets.sh
+
+# Install MySQL db
+helm upgrade --install mysql ./deployments/mysql

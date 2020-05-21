@@ -1,3 +1,2 @@
-export const PUB_SUB = 'PUB_SUB';
 export const PROCESS_EVENTS_QUEUE = 'PROCESS_EVENTS_QUEUE ';
 export const PROCESS_EVENTS_JOB = 'PROCESS_EVENTS_JOB';

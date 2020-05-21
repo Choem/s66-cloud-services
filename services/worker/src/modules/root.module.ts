@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { PUB_SUB } from '../lib/constants';
-
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { EventModule } from './event/event.module';
@@ -23,13 +20,6 @@ import { StatisticModule } from './statistic/statistic.module';
       useFactory: (configService: ConfigService) => configService.GraphQLConfig,
       inject: [ConfigService],
     }),
-  ],
-  providers: [
-    {
-      provide: PUB_SUB,
-      useFactory: (configService: ConfigService) => configService.RedisPubSub,
-      inject: [ConfigService],
-    },
   ],
 })
 export class RootModule {}

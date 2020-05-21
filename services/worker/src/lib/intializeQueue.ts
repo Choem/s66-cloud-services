@@ -8,14 +8,15 @@ import { PROCESS_EVENTS_QUEUE, PROCESS_EVENTS_JOB } from './constants';
 import { EventStatusType } from '../database/enums/eventStatusType';
 import { MutationType } from '../database/enums/mutationType';
 import { Queue } from 'bullmq';
-import { PubSubEngine } from 'graphql-subscriptions';
 import { Topic } from './topic';
 import { EventsStatusChangedPayload } from 'src/modules/event/payloads/eventsStatusChangedPayload';
+import { getPubSub } from './getPubSub';
+import { PubSubEngine } from 'graphql-subscriptions';
 
-export async function initializeQueue(
-  connection: Connection,
-  pubSub: PubSubEngine,
-) {
+export async function initializeQueue(connection: Connection) {
+  // Get pubSub
+  const pubSub = getPubSub();
+
   // Get repositories
   const eventRepository = connection.getRepository(EventEntity);
   const statisticRepository = connection.getRepository(StatisticEntity);

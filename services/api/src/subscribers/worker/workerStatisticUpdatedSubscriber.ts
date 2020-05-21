@@ -1,10 +1,10 @@
 import { workerClient } from '../../lib/workerClient';
 import { FetchResult } from 'apollo-link';
 import { gql } from 'apollo-boost';
-import { PubSubEngine } from 'graphql-subscriptions';
 import { Topic } from '../../lib/topic';
+import { getPubSub } from '../../lib/getPubSub';
 
-export function initSubscription(pubSub: PubSubEngine) {
+export function initSubscription() {
   workerClient
     .subscribe({
       query: gql`
@@ -20,6 +20,8 @@ export function initSubscription(pubSub: PubSubEngine) {
       if (!value.data) {
         return;
       }
+
+      const pubSub = getPubSub();
 
       pubSub.publish(Topic.STATISTIC_UPDATED, value.data);
     }, console.error);

@@ -37,6 +37,7 @@
     "ioredis": "^4.17.1",
     "joi": "^14.3.1",
     "mysql": "^2.18.1",
+    "node-fetch": "^2.6.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",

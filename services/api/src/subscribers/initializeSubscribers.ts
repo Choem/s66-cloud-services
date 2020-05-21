@@ -1,9 +1,8 @@
 import * as WorkerEventStatusChangedSubscriber from './worker/workerEventStatusChangedSubscriber';
 import * as workerStatisticUpdatedSubscriber from './worker/workerStatisticUpdatedSubscriber';
-import { PubSubEngine } from 'graphql-subscriptions';
 
-export function intializeSubscribers(pubSub: PubSubEngine) {
+export function intializeSubscribers() {
   // Worker service
-  WorkerEventStatusChangedSubscriber.initSubscription(pubSub);
-  workerStatisticUpdatedSubscriber.initSubscription(pubSub);
+  WorkerEventStatusChangedSubscriber.initSubscription();
+  workerStatisticUpdatedSubscriber.initSubscription();
 }
