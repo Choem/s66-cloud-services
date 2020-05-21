@@ -1,5 +1,5 @@
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis, { RedisOptions } from 'ioredis';
+import {RedisPubSub} from 'graphql-redis-subscriptions';
+import Redis, {RedisOptions} from 'ioredis';
 
 export function getPubSub(): RedisPubSub {
   const redisOptions: RedisOptions = {

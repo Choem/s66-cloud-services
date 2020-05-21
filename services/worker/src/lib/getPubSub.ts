@@ -1,11 +1,9 @@
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis, { RedisOptions } from 'ioredis';
+import {RedisPubSub} from 'graphql-redis-subscriptions';
+import Redis from 'ioredis';
+import {getRedisOptions} from './getRedisOptions';
 
 export function getPubSub(): RedisPubSub {
-  const redisOptions: RedisOptions = {
-    host: process.env.WORKER_REDIS_SERVICE,
-    port: 6379,
-  };
+  const redisOptions = getRedisOptions();
 
   return new RedisPubSub({
     publisher: new Redis(redisOptions),

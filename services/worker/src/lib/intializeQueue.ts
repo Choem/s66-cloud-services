@@ -1,17 +1,20 @@
+import { Queue, Job, QueueScheduler, Worker } from 'bullmq';
+import { PubSubEngine } from 'graphql-subscriptions';
+import { EventsStatusChangedPayload } from 'src/modules/event/payloads/eventsStatusChangedPayload';
 import { Connection, Repository } from 'typeorm';
+
 import { EventEntity } from '../database/entities/event.entity';
 import {
-  StatisticEntity,
   STATISTIC_ID,
+  StatisticEntity,
 } from '../database/entities/statistic.entity';
-import { PROCESS_EVENTS_QUEUE, PROCESS_EVENTS_JOB } from './constants';
 import { EventStatusType } from '../database/enums/eventStatusType';
 import { MutationType } from '../database/enums/mutationType';
-import { Queue } from 'bullmq';
-import { Topic } from './topic';
-import { EventsStatusChangedPayload } from 'src/modules/event/payloads/eventsStatusChangedPayload';
+
+import { PROCESS_EVENTS_JOB, PROCESS_EVENTS_QUEUE } from './constants';
 import { getPubSub } from './getPubSub';
-import { PubSubEngine } from 'graphql-subscriptions';
+import { getRedisOptions } from './getRedisOptions';
+import { Topic } from './topic';
 
 export async function initializeQueue(connection: Connection) {
   // Get pubSub
@@ -22,88 +25,114 @@ export async function initializeQueue(connection: Connection) {
   const statisticRepository = connection.getRepository(StatisticEntity);
 
   // Initialize new queue
-  const queue = new Queue(PROCESS_EVENTS_QUEUE);
+  const options = {
+    connection: getRedisOptions(),
+  };
+  const queueScheduler = new QueueScheduler(PROCESS_EVENTS_QUEUE, options);
+  const queue = new Queue(PROCESS_EVENTS_QUEUE, options);
+  const worker = new Worker(
+    PROCESS_EVENTS_QUEUE,
+    async (job: Job) =>
+      processJob(job, {
+        eventRepository,
+        statisticRepository,
+        pubSub,
+      }),
+    options,
+  );
+
+  await queueScheduler.waitUntilReady();
+  await queue.waitUntilReady();
+  await worker.waitUntilReady();
 
   // Add repeatable job to queue
-  await queue.add(PROCESS_EVENTS_JOB, null, {
+  queue.add(PROCESS_EVENTS_JOB, null, {
     repeat: { cron: process.env.CRON },
   });
+}
 
-  // Handle active jobs
-  queue.on('active', async () => {
-    const events = await eventRepository
-      .createQueryBuilder('event')
-      .limit(Number(process.env.BATCH_SIZE))
-      .where('event.eventStatusType = :eventStatusType', {
-        eventStatusType: EventStatusType.IDLE,
-      })
-      .getMany();
+async function processJob(
+  job: Job,
+  settings: {
+    eventRepository: Repository<EventEntity>;
+    statisticRepository: Repository<StatisticEntity>;
+    pubSub: PubSubEngine;
+  },
+) {
+  const { eventRepository, statisticRepository, pubSub } = settings;
 
-    if (events.length) {
-      const eventIds = events.map(event => event.id);
+  const events = await eventRepository
+    .createQueryBuilder('event')
+    .limit(Number(process.env.BATCH_SIZE))
+    .where('event.eventStatusType = :eventStatusType', {
+      eventStatusType: EventStatusType.IDLE,
+    })
+    .getMany();
 
-      // Set event status type to working
-      await setEventStatusType(eventIds, EventStatusType.WORKING, {
-        repository: eventRepository,
-        pubSub,
-      });
+  if (events.length) {
+    const eventIds = events.map(event => event.id);
 
-      // Loop over events to adjust the total
-      let total = 0;
+    // Set event status type to working
+    await setEventStatusType(eventIds, EventStatusType.WORKING, {
+      repository: eventRepository,
+      pubSub,
+    });
 
-      for (const event of events) {
-        switch (event.mutationType) {
-          case MutationType.ADDITION:
-            total += 1;
-            break;
-          case MutationType.SUBTRACTION:
-            total -= 1;
-            break;
-        }
-      }
+    // Loop over events to adjust the total
+    let total = 0;
 
-      // Try and find the corresponding statistic
-      const foundStatistic = await statisticRepository.findOne({
-        where: { id: STATISTIC_ID },
-      });
-
-      // Calculate new total
-      const newTotal = foundStatistic.total + total;
-
-      // Check if the statistic is found and the new total is a number
-      if (foundStatistic && !isNaN(newTotal)) {
-        try {
-          // Save statistic and publish accordingly
-          await statisticRepository
-            .createQueryBuilder()
-            .update(StatisticEntity)
-            .set({
-              total: newTotal,
-            })
-            .where('id = :id', { id: foundStatistic.id })
-            .execute();
-
-          await setEventStatusType(eventIds, EventStatusType.PROCESSED, {
-            repository: eventRepository,
-            pubSub,
-          });
-
-          await pubSub.publish(Topic.STATISTIC_UPDATED, {
-            id: foundStatistic.id,
-            total: newTotal,
-          });
-        } catch (e) {
-          // Don't save the statistic and set events to failed status
-          await setEventStatusType(eventIds, EventStatusType.FAILED, {
-            repository: eventRepository,
-            pubSub,
-          });
-
-          throw new Error(e);
-        }
+    for (const event of events) {
+      switch (event.mutationType) {
+        case MutationType.ADDITION:
+          total += 1;
+          break;
+        case MutationType.SUBTRACTION:
+          total -= 1;
+          break;
       }
     }
-  });
+
+    // Try and find the corresponding statistic
+    const foundStatistic = await statisticRepository.findOne({
+      where: { id: STATISTIC_ID },
+    });
+
+    // Calculate new total
+    const newTotal = foundStatistic.total + total;
+
+    // Check if the statistic is found and the new total is a number
+    if (foundStatistic && !isNaN(newTotal)) {
+      try {
+        // Save statistic and publish accordingly
+        await statisticRepository
+          .createQueryBuilder()
+          .update(StatisticEntity)
+          .set({
+            total: newTotal,
+          })
+          .where('id = :id', { id: foundStatistic.id })
+          .execute();
+
+        await setEventStatusType(eventIds, EventStatusType.PROCESSED, {
+          repository: eventRepository,
+          pubSub,
+        });
+
+        await pubSub.publish(Topic.STATISTIC_UPDATED, {
+          id: foundStatistic.id,
+          total: newTotal,
+        });
+      } catch (e) {
+        // Don't save the statistic and set events to failed status
+        await setEventStatusType(eventIds, EventStatusType.FAILED, {
+          repository: eventRepository,
+          pubSub,
+        });
+
+        throw new Error(e);
+      }
+    }
+  }
 }
 
 async function setEventStatusType(
