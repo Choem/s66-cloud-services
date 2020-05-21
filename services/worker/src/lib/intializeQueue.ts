@@ -15,8 +15,12 @@ import { PROCESS_EVENTS_JOB, PROCESS_EVENTS_QUEUE } from './constants';
 import { getPubSub } from './getPubSub';
 import { getRedisOptions } from './getRedisOptions';
 import { Topic } from './topic';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function initializeQueue(connection: Connection) {
+  // Generate service specific uuid
+  const uuid = uuidv4();
+
   // Get pubSub
   const pubSub = getPubSub();
 
@@ -25,13 +29,14 @@ export async function initializeQueue(connection: Connection) {
   const statisticRepository = connection.getRepository(StatisticEntity);
 
   // Initialize new queue
+  const queueName = `${PROCESS_EVENTS_QUEUE}-${uuid}`;
   const options = {
     connection: getRedisOptions(),
   };
-  const queueScheduler = new QueueScheduler(PROCESS_EVENTS_QUEUE, options);
-  const queue = new Queue(PROCESS_EVENTS_QUEUE, options);
+  const queueScheduler = new QueueScheduler(queueName, options);
+  const queue = new Queue(queueName, options);
   const worker = new Worker(
-    PROCESS_EVENTS_QUEUE,
+    queueName,
     async (job: Job) =>
       processJob(job, {
         eventRepository,
@@ -46,7 +51,7 @@ export async function initializeQueue(connection: Connection) {
   await worker.waitUntilReady();
 
   // Add repeatable job to queue
-  queue.add(PROCESS_EVENTS_JOB, null, {
+  queue.add(`${PROCESS_EVENTS_JOB}-${uuid}`, null, {
     repeat: { cron: process.env.CRON },
   });
 }
@@ -59,7 +64,7 @@ async function processJob(
     pubSub: PubSubEngine;
   },
 ) {
-  console.info('Started a job with id: ', job.id);
+  console.info(`[${new Date()}] Started a job with id: ${job.id}`);
 
   const { eventRepository, statisticRepository, pubSub } = settings;
 
