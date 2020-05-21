@@ -20,6 +20,7 @@ import {
   EventStatusChangedPayload,
   StatisticUpdatedPayload,
 } from "./lib/payloads";
+import Moment from "react-moment";
 
 export function App() {
   // Queries
@@ -152,7 +153,13 @@ export function App() {
                   }}
                   key={index}
                 >
-                  {index + 1}. {event.mutationType} - {event.createdAt}
+                  <span>{index + 1}.</span>
+                  <span>{event.mutationType} -</span>
+                  <span>
+                    <Moment format="DD-MM-YYYY HH:mm:ss">
+                      {event.createdAt}
+                    </Moment>
+                  </span>
                 </li>
               ))}
             </ul>

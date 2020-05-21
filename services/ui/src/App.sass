@@ -44,13 +44,16 @@
 
     .right
       width: calc(30% - 5px)
-      overflow-y: scroll
       margin-left: 5px
 
       ul
+        height: calc(100% - 100px)
+        overflow-y: scroll
         list-style: none
         li
-          word-break: break-all
+          span
+            margin-right: 10px
+            word-break: break-all
 
 .loader,
 .error
