@@ -1,10 +1,12 @@
 import { gql } from "apollo-boost";
 
-export const EVENT_STATUS_CHANGED_SUBSCRIPTION = gql`
-  subscription EventStatusChanged {
-    eventStatusChanged {
-      id
-      status
+export const EVENTS_STATUS_CHANGED_SUBSCRIPTION = gql`
+  subscription EventsStatusChanged {
+    eventsStatusChanged {
+      changedEvents {
+        id
+        eventStatusType
+      }
     }
   }
 `;

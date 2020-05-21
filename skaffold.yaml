@@ -24,6 +24,14 @@ build:
             dest: .
           - src: "src/**/*.sass"
             dest: .
+    - image: s66-cloud-services-worker
+      context: services/worker
+      docker:
+        target: dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
   local:
     push: false
 deploy:
@@ -36,3 +44,7 @@ deploy:
       - deployments/ui/templates/deployment.yaml
       - deployments/ui/templates/ingress.yaml
       - deployments/ui/templates/service.yaml
+      - deployments/worker/templates/deployment.yaml
+      - deployments/worker/templates/ingress.yaml
+      - deployments/worker/templates/redis.yaml
+      - deployments/worker/templates/service.yaml

@@ -12,7 +12,7 @@ import { useQuery, useMutation, useSubscription } from "@apollo/react-hooks";
 import { CREATE_EVENT_MUTATION } from "./lib/mutations";
 import "./App.sass";
 import {
-  EVENT_STATUS_CHANGED_SUBSCRIPTION,
+  EVENTS_STATUS_CHANGED_SUBSCRIPTION,
   STATISTIC_UPDATED_SUBSCRIPTION,
 } from "./lib/subscriptions";
 import { getEventColor } from "./lib/getEventColor";
@@ -37,16 +37,15 @@ export function App() {
   // Subscriptions
   const { loading: isEventStatusChangedLoading } = useSubscription<
     EventStatusChangedPayload
-  >(EVENT_STATUS_CHANGED_SUBSCRIPTION, {
+  >(EVENTS_STATUS_CHANGED_SUBSCRIPTION, {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
-        setEventsState(
-          eventsState.map((event) =>
-            event.id === data.id
-              ? { ...event, eventStatusType: data.eventStatusType }
-              : event
-          )
-        );
+        console.log(data);
+        // setEventsState(
+        //   eventsState.map((event) => {
+        //     const foundIndex = data.eventsStatusChanged
+        //   })
+        // );
       }
     },
   });

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PubSub } from 'graphql-subscriptions';
 
 import { PUB_SUB } from '../lib/constants';
 
@@ -28,7 +27,8 @@ import { StatisticModule } from './statistic/statistic.module';
   providers: [
     {
       provide: PUB_SUB,
-      useValue: new PubSub(),
+      useFactory: (configService: ConfigService) => configService.RedisPubSub,
+      inject: [ConfigService],
     },
   ],
 })

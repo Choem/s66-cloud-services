@@ -41,3 +41,7 @@ spec:
                 key: password
           - name: REDIS_SERVICE
             value: worker-subscriptions
+          - name: CRON
+            value: '* * * * *'
+          - name: BATCH_SIZE
+            value: 10
