@@ -59,6 +59,8 @@ async function processJob(
     pubSub: PubSubEngine;
   },
 ) {
+  console.info('Started a job with id: ', job.id);
+
   const { eventRepository, statisticRepository, pubSub } = settings;
 
   const events = await eventRepository

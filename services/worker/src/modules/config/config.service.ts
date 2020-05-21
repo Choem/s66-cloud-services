@@ -50,7 +50,7 @@ export class ConfigService {
 
   public get RedisConfig(): RedisOptions {
     return {
-      host: process.env.REDIS_SERVICE,
+      host: process.env.WORKER_REDIS_SERVICE,
       port: 6379,
     };
   }

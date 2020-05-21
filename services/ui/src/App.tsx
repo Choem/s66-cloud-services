@@ -118,51 +118,47 @@ export function App() {
 
   return (
     <div className="app-container">
-      <Grid container spacing={1} className="grid">
-        <Grid item xs={8}>
-          <div className="grid__item left">
-            <div className="counter">
-              <IconButton
-                className="button"
-                aria-label="remove"
-                onClick={() => createEvent(MutationType.SUBTRACTION)}
-              >
-                <RemoveIcon />
-              </IconButton>
-              <span className="total">{totalState}</span>
-              <IconButton
-                className="button"
-                aria-label="add"
-                onClick={() => createEvent(MutationType.ADDITION)}
-              >
-                <AddIcon />
-              </IconButton>
-            </div>
+      <div className="grid">
+        <div className="grid__item left">
+          <div className="counter">
+            <IconButton
+              className="button"
+              aria-label="remove"
+              onClick={() => createEvent(MutationType.SUBTRACTION)}
+            >
+              <RemoveIcon />
+            </IconButton>
+            <span className="total">{totalState}</span>
+            <IconButton
+              className="button"
+              aria-label="add"
+              onClick={() => createEvent(MutationType.ADDITION)}
+            >
+              <AddIcon />
+            </IconButton>
           </div>
-        </Grid>
-        <Grid item xs={4}>
-          <div className="grid__item right">
-            <h2 className="grid__item__title">Events</h2>
-            {!eventsState.length ? (
-              <span>There are no events yet.</span>
-            ) : (
-              <ul>
-                {eventsState.map((event, index) => (
-                  <li
-                    style={{
-                      marginBottom: "5px",
-                      color: getEventColor(event.eventStatusType),
-                    }}
-                    key={index}
-                  >
-                    {index + 1}. {event.mutationType} - {event.createdAt}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </Grid>
-      </Grid>
+        </div>
+        <div className="grid__item right">
+          <h2 className="grid__item__title">Events</h2>
+          {!eventsState.length ? (
+            <span>There are no events yet.</span>
+          ) : (
+            <ul>
+              {eventsState.map((event, index) => (
+                <li
+                  style={{
+                    marginBottom: "5px",
+                    color: getEventColor(event.eventStatusType),
+                  }}
+                  key={index}
+                >
+                  {index + 1}. {event.mutationType} - {event.createdAt}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,15 +1,15 @@
-import {Injectable} from '@nestjs/common';
-import {GqlModuleOptions} from '@nestjs/graphql';
-import {TypeOrmModuleOptions} from '@nestjs/typeorm';
-import {RedisPubSub} from 'graphql-redis-subscriptions';
-import Redis, {RedisOptions} from 'ioredis';
+import { Injectable } from '@nestjs/common';
+import { GqlModuleOptions } from '@nestjs/graphql';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import Redis, { RedisOptions } from 'ioredis';
 import * as Joi from 'joi';
 
-import {EventEntity} from '../../database/entities/event.entity';
-import {StatisticEntity} from '../../database/entities/statistic.entity';
-import {Initial1589909366425} from '../../database/migrations/1589909366425-Initial';
+import { EventEntity } from '../../database/entities/event.entity';
+import { StatisticEntity } from '../../database/entities/statistic.entity';
+import { Initial1589909366425 } from '../../database/migrations/1589909366425-Initial';
 
-import {EnvConfig} from './envConfig';
+import { EnvConfig } from './envConfig';
 
 @Injectable()
 export class ConfigService {
@@ -52,7 +52,7 @@ export class ConfigService {
 
   public get RedisConfig(): RedisOptions {
     return {
-      host: process.env.REDIS_SERVICE,
+      host: process.env.API_REDIS_SERVICE,
       port: 6379,
     };
   }
@@ -67,8 +67,8 @@ export class ConfigService {
   private validateInput(envConfig: any): EnvConfig {
     const envConfigSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-                    .valid(['development', 'production'])
-                    .default('development'),
+        .valid(['development', 'production'])
+        .default('development'),
       DB_DRIVER: Joi.string().required(),
       DB_HOST: Joi.string().required(),
       DB_PORT: Joi.number().required(),
@@ -79,10 +79,10 @@ export class ConfigService {
       API_REDIS_SERVICE: Joi.string().required(),
     });
 
-    const {error, value: validatedEnvConfig} = Joi.validate(
-        envConfig,
-        envConfigSchema,
-        {allowUnknown: true},
+    const { error, value: validatedEnvConfig } = Joi.validate(
+      envConfig,
+      envConfigSchema,
+      { allowUnknown: true },
     );
 
     if (error) {

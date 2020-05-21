@@ -17,6 +17,7 @@ export function initSubscription() {
       `,
     })
     .subscribe((value: FetchResult) => {
+      console.log(value);
       if (!value.data) {
         return;
       }
