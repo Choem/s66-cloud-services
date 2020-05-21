@@ -19,7 +19,6 @@ import { Topic } from './topic';
 export async function initializeQueue(connection: Connection) {
   // Get pubSub
   const pubSub = getPubSub();
-  await pubSub.publish(Topic.STATISTIC_UPDATED, { id: 1, total: 1337 });
 
   // Get repositories
   const eventRepository = connection.getRepository(EventEntity);
@@ -100,40 +99,55 @@ async function processJob(
       where: { id: STATISTIC_ID },
     });
 
+    if (!foundStatistic) {
+      await setEventStatusType(eventIds, EventStatusType.FAILED, {
+        repository: eventRepository,
+        pubSub,
+      });
+
+      throw new Error('Statistic not found');
+    }
+
     // Calculate new total
     const newTotal = foundStatistic.total + total;
 
-    // Check if the statistic is found and the new total is a number
-    if (foundStatistic && !isNaN(newTotal)) {
-      try {
-        // Save statistic and publish accordingly
-        await statisticRepository
-          .createQueryBuilder()
-          .update(StatisticEntity)
-          .set({
-            total: newTotal,
-          })
-          .where('id = :id', { id: foundStatistic.id })
-          .execute();
+    if (isNaN(newTotal)) {
+      await setEventStatusType(eventIds, EventStatusType.FAILED, {
+        repository: eventRepository,
+        pubSub,
+      });
 
-        await setEventStatusType(eventIds, EventStatusType.PROCESSED, {
-          repository: eventRepository,
-          pubSub,
-        });
+      throw new Error('New total is NaN');
+    }
 
-        await pubSub.publish(Topic.STATISTIC_UPDATED, {
-          id: foundStatistic.id,
+    try {
+      // Save statistic and publish accordingly
+      await statisticRepository
+        .createQueryBuilder()
+        .update(StatisticEntity)
+        .set({
           total: newTotal,
-        });
-      } catch (e) {
-        // Don't save the statistic and set events to failed status
-        await setEventStatusType(eventIds, EventStatusType.FAILED, {
-          repository: eventRepository,
-          pubSub,
-        });
+        })
+        .where('id = :id', { id: foundStatistic.id })
+        .execute();
 
-        throw new Error(e);
-      }
+      await setEventStatusType(eventIds, EventStatusType.PROCESSED, {
+        repository: eventRepository,
+        pubSub,
+      });
+
+      await pubSub.publish(Topic.STATISTIC_UPDATED, {
+        id: foundStatistic.id,
+        total: newTotal,
+      });
+    } catch (e) {
+      // Don't save the statistic and set events to failed status
+      await setEventStatusType(eventIds, EventStatusType.FAILED, {
+        repository: eventRepository,
+        pubSub,
+      });
+
+      throw new Error(e);
     }
   }
 }

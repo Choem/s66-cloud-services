@@ -22,6 +22,6 @@ export class EventService {
   }
 
   async findAll(): Promise<EventEntity[]> {
-    return await this.eventRepository.find();
+    return await this.eventRepository.find({ order: { createdAt: 'DESC' } });
   }
 }

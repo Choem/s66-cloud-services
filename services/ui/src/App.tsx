@@ -89,13 +89,13 @@ export function App() {
     if (createdEvent) {
       const createdEventData = createdEvent.createEvent;
       setEventsState((prevState) => [
-        ...prevState,
         {
           id: createdEventData.id,
           mutationType: createdEventData.mutationType,
           createdAt: createdEventData.createdAt,
           eventStatusType: createdEventData.eventStatusType,
         },
+        ...prevState,
       ]);
     }
   }, [createdEvent, setEventsState]);
@@ -153,7 +153,7 @@ export function App() {
                   }}
                   key={index}
                 >
-                  <span>{index + 1}.</span>
+                  <span>{eventsState.length - index}.</span>
                   <span>{event.mutationType}</span>
                   <span>
                     (
