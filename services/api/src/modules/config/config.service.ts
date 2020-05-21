@@ -76,6 +76,7 @@ export class ConfigService {
       DB_PASSWORD: Joi.string().required(),
       DB_NAME: Joi.string().required(),
       WORKER_SERVICE: Joi.string().required(),
+      API_REDIS_SERVICE: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } = Joi.validate(

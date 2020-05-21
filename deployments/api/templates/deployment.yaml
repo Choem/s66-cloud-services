@@ -39,7 +39,7 @@ spec:
               secretKeyRef:
                 name: mysql-auth
                 key: password
-          - name: REDIS_SERVICE
+          - name: API_REDIS_SERVICE
             value: api-subscriptions
           - name: WORKER_SERVICE
             value: worker-deployment

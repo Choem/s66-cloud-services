@@ -3,7 +3,7 @@ import Redis, { RedisOptions } from 'ioredis';
 
 export function getPubSub(): RedisPubSub {
   const redisOptions: RedisOptions = {
-    host: process.env.REDIS_SERVICE,
+    host: process.env.API_REDIS_SERVICE,
     port: 6379,
   };
 

@@ -88,13 +88,13 @@ export function App() {
     if (createdEvent) {
       const createdEventData = createdEvent.createEvent;
       setEventsState((prevState) => [
+        ...prevState,
         {
           id: createdEventData.id,
           mutationType: createdEventData.mutationType,
           createdAt: createdEventData.createdAt,
           eventStatusType: createdEventData.eventStatusType,
         },
-        ...prevState,
       ]);
     }
   }, [createdEvent, setEventsState]);

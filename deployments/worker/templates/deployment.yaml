@@ -39,7 +39,7 @@ spec:
               secretKeyRef:
                 name: mysql-auth
                 key: password
-          - name: REDIS_SERVICE
+          - name: WORKER_REDIS_SERVICE
             value: worker-subscriptions
           - name: CRON
             value: '* * * * *'
