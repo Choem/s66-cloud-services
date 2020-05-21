@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { MutationType } from "./models/mutationType";
-import { CircularProgress, IconButton, Grid } from "@material-ui/core";
+import { CircularProgress, IconButton } from "@material-ui/core";
 import { Event } from "./models/event";
 import {
   FIND_ALL_EVENTS_QUERY,
@@ -154,11 +154,13 @@ export function App() {
                   key={index}
                 >
                   <span>{index + 1}.</span>
-                  <span>{event.mutationType} -</span>
+                  <span>{event.mutationType}</span>
                   <span>
+                    (
                     <Moment format="DD-MM-YYYY HH:mm:ss">
                       {event.createdAt}
                     </Moment>
+                    )
                   </span>
                 </li>
               ))}
