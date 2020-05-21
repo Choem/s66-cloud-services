@@ -18,7 +18,7 @@ export function initSubscription() {
         }
       `,
     })
-    .subscribe((value: FetchResult) => {
+    .subscribe(async (value: FetchResult) => {
       console.log(value);
       if (!value.data) {
         return;
@@ -26,6 +26,6 @@ export function initSubscription() {
 
       const pubSub = getPubSub();
 
-      pubSub.publish(Topic.EVENTS_STATUS_CHANGED, value.data);
+      await pubSub.publish(Topic.EVENTS_STATUS_CHANGED, value.data);
     }, console.error);
 }

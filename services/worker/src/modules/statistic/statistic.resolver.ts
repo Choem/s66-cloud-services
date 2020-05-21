@@ -18,7 +18,6 @@ export class StatisticResolver {
   statisticUpdated(
     @Root() payload: StatisticUpdatedPayload,
   ): StatisticUpdatedPayload {
-    console.log(payload);
     return payload;
   }
 }

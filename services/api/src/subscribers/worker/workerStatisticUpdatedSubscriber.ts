@@ -16,7 +16,7 @@ export function initSubscription() {
         }
       `,
     })
-    .subscribe((value: FetchResult) => {
+    .subscribe(async (value: FetchResult) => {
       console.log(value);
       if (!value.data) {
         return;
@@ -24,6 +24,6 @@ export function initSubscription() {
 
       const pubSub = getPubSub();
 
-      pubSub.publish(Topic.STATISTIC_UPDATED, value.data);
+      await pubSub.publish(Topic.STATISTIC_UPDATED, value.data);
     }, console.error);
 }

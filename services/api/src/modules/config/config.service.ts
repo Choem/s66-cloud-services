@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GqlModuleOptions } from '@nestjs/graphql';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis, { RedisOptions } from 'ioredis';
 import * as Joi from 'joi';
 
 import { EventEntity } from '../../database/entities/event.entity';
@@ -10,6 +8,7 @@ import { StatisticEntity } from '../../database/entities/statistic.entity';
 import { Initial1589909366425 } from '../../database/migrations/1589909366425-Initial';
 
 import { EnvConfig } from './envConfig';
+import { getPubSub } from '../../lib/getPubSub';
 
 @Injectable()
 export class ConfigService {
@@ -47,21 +46,8 @@ export class ConfigService {
         path: '/graphql/subscriptions',
         keepAlive: 10000,
       },
+      pubSub: getPubSub(),
     } as GqlModuleOptions;
-  }
-
-  public get RedisConfig(): RedisOptions {
-    return {
-      host: process.env.API_REDIS_SERVICE,
-      port: 6379,
-    };
-  }
-
-  public get RedisPubSub(): RedisPubSub {
-    return new RedisPubSub({
-      publisher: new Redis(this.RedisConfig),
-      subscriber: new Redis(this.RedisConfig),
-    });
   }
 
   private validateInput(envConfig: any): EnvConfig {

@@ -19,6 +19,7 @@ import { Topic } from './topic';
 export async function initializeQueue(connection: Connection) {
   // Get pubSub
   const pubSub = getPubSub();
+  await pubSub.publish(Topic.STATISTIC_UPDATED, { id: 1, total: 1337 });
 
   // Get repositories
   const eventRepository = connection.getRepository(EventEntity);
