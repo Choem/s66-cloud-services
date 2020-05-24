@@ -19,7 +19,6 @@ export function initSubscription() {
       `,
     })
     .subscribe(async (value: FetchResult) => {
-      console.log(value);
       if (!value.data) {
         return;
       }
