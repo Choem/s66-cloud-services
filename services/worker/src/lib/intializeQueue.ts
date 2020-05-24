@@ -142,7 +142,8 @@ async function processJob(
       });
 
       await pubSub.publish(Topic.STATISTIC_UPDATED, {
-        [Topic.STATISTIC_UPDATED]: { id: foundStatistic.id, total: newTotal },
+        id: foundStatistic.id,
+        total: newTotal,
       });
     } catch (e) {
       // Don't save the statistic and set events to failed status
@@ -171,11 +172,6 @@ async function setEventStatusType(
     .execute();
 
   await settings.pubSub.publish(Topic.EVENTS_STATUS_CHANGED, {
-    [Topic.EVENTS_STATUS_CHANGED]: {
-      changedEvents: eventIds.map(eventId => ({
-        id: eventId,
-        eventStatusType,
-      })),
-    },
-  });
+    changedEvents: eventIds.map(eventId => ({ id: eventId, eventStatusType })),
+  } as EventsStatusChangedPayload);
 }
