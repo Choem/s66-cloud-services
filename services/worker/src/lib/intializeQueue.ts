@@ -1,7 +1,8 @@
-import { Queue, Job, QueueScheduler, Worker } from 'bullmq';
+import { Job, Queue, QueueScheduler, Worker } from 'bullmq';
 import { PubSubEngine } from 'graphql-subscriptions';
 import { EventsStatusChangedPayload } from 'src/modules/event/payloads/eventsStatusChangedPayload';
 import { Connection, Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { EventEntity } from '../database/entities/event.entity';
 import {
@@ -15,7 +16,6 @@ import { PROCESS_EVENTS_JOB, PROCESS_EVENTS_QUEUE } from './constants';
 import { getPubSub } from './getPubSub';
 import { getRedisOptions } from './getRedisOptions';
 import { Topic } from './topic';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function initializeQueue(connection: Connection) {
   // Generate service specific uuid
@@ -142,8 +142,7 @@ async function processJob(
       });
 
       await pubSub.publish(Topic.STATISTIC_UPDATED, {
-        id: foundStatistic.id,
-        total: newTotal,
+        [Topic.STATISTIC_UPDATED]: { id: foundStatistic.id, total: newTotal },
       });
     } catch (e) {
       // Don't save the statistic and set events to failed status
@@ -172,6 +171,11 @@ async function setEventStatusType(
     .execute();
 
   await settings.pubSub.publish(Topic.EVENTS_STATUS_CHANGED, {
-    changedEvents: eventIds.map(eventId => ({ id: eventId, eventStatusType })),
-  } as EventsStatusChangedPayload);
+    [Topic.EVENTS_STATUS_CHANGED]: {
+      changedEvents: eventIds.map(eventId => ({
+        id: eventId,
+        eventStatusType,
+      })),
+    },
+  });
 }

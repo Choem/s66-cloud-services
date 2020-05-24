@@ -5,9 +5,9 @@ import * as Joi from 'joi';
 
 import { EventEntity } from '../../database/entities/event.entity';
 import { StatisticEntity } from '../../database/entities/statistic.entity';
+import { getPubSub } from '../../lib/getPubSub';
 
 import { EnvConfig } from './envConfig';
-import { getPubSub } from '../../lib/getPubSub';
 
 @Injectable()
 export class ConfigService {
@@ -44,7 +44,6 @@ export class ConfigService {
         path: '/graphql/subscriptions',
         keepAlive: 10000,
       },
-      pubSub: getPubSub(),
     } as GqlModuleOptions;
   }
 
