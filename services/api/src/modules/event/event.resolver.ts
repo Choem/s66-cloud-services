@@ -13,10 +13,17 @@ import { Topic } from '../../lib/topic';
 import { EventService } from './event.service';
 import { CreateEventInput } from './inputs/createEventInput';
 import { EventsStatusChangedPayload } from './payloads/eventsStatusChangedPayload';
+import { PubSubEngine } from 'graphql-subscriptions';
+import { Inject } from '@nestjs/common';
+import { PUB_SUB } from '../../lib/constants';
 
 @Resolver(EventEntity)
 export class EventResolver {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    @Inject(PUB_SUB)
+    private readonly pubSub: PubSubEngine,
+    private readonly eventService: EventService,
+  ) {}
 
   @Mutation(returns => EventEntity)
   async createEvent(
@@ -32,10 +39,9 @@ export class EventResolver {
 
   @Subscription(returns => EventsStatusChangedPayload, {
     name: Topic.EVENTS_STATUS_CHANGED,
+    resolve: (payload: EventsStatusChangedPayload) => payload,
   })
-  eventsStatusChanged(
-    @Root() payload: EventsStatusChangedPayload,
-  ): EventsStatusChangedPayload {
-    return payload;
+  eventsStatusChanged() {
+    return this.pubSub.asyncIterator(Topic.EVENTS_STATUS_CHANGED);
   }
 }

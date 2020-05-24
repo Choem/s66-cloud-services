@@ -9,7 +9,7 @@ export function initSubscription() {
     .subscribe({
       query: gql`
         subscription StatisticUpdated {
-          statisticUpdated {
+          ${Topic.STATISTIC_UPDATED} {
             id
             total
           }

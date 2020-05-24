@@ -9,7 +9,7 @@ export function initSubscription() {
     .subscribe({
       query: gql`
         subscription EventsStatusChanged {
-          eventsStatusChanged {
+          ${Topic.EVENTS_STATUS_CHANGED} {
             changedEvents {
               id
               eventStatusType
