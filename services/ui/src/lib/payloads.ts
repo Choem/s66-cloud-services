@@ -1,11 +1,18 @@
-import {EventStatusType} from '../models/eventStatusType';
+import { EventStatusType } from "../models/eventStatusType";
+import { Topic } from "./topic";
 
 export interface EventStatusChangedPayload {
-  id: number;
-  eventStatusType: EventStatusType
+  [Topic.EVENTS_STATUS_CHANGED]: {
+    changedEvents: {
+      id: number;
+      eventStatusType: EventStatusType;
+    }[];
+  };
 }
 
 export interface StatisticUpdatedPayload {
-  id: number;
-  total: number;
+  [Topic.STATISTIC_UPDATED]: {
+    id: number;
+    total: number;
+  };
 }

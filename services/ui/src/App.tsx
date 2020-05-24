@@ -41,12 +41,20 @@ export function App() {
   >(EVENTS_STATUS_CHANGED_SUBSCRIPTION, {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
-        console.log(data);
-        // setEventsState(
-        //   eventsState.map((event) => {
-        //     const foundIndex = data.eventsStatusChanged
-        //   })
-        // );
+        const changedEvents = data.EVENTS_STATUS_CHANGED.changedEvents;
+        setEventsState((prevState) => [
+          ...prevState.map((prevEvent) => {
+            const foundIndex = changedEvents.findIndex(
+              (event) => event.id === prevEvent.id
+            );
+
+            if (foundIndex === -1) {
+              return prevEvent;
+            }
+
+            return { ...prevEvent, ...changedEvents[foundIndex] };
+          }),
+        ]);
       }
     },
   });
@@ -56,7 +64,7 @@ export function App() {
   >(STATISTIC_UPDATED_SUBSCRIPTION, {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
-        setTotalState(data.total);
+        setTotalState(data.STATISTIC_UPDATED.total);
       }
     },
   });
