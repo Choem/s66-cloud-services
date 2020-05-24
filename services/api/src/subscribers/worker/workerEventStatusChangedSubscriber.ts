@@ -26,6 +26,9 @@ export function initSubscription() {
 
       const pubSub = getPubSub();
 
-      await pubSub.publish(Topic.EVENTS_STATUS_CHANGED, value.data);
+      await pubSub.publish(
+        Topic.EVENTS_STATUS_CHANGED,
+        value.data[Topic.EVENTS_STATUS_CHANGED],
+      );
     }, console.error);
 }

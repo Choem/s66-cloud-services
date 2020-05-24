@@ -42,4 +42,4 @@ spec:
           - name: API_REDIS_SERVICE
             value: "api-subscriptions"
           - name: WORKER_SERVICE
-            value: worker-deployment
+            value: worker-service

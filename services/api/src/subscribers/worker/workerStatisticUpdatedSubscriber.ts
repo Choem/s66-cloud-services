@@ -17,13 +17,16 @@ export function initSubscription() {
       `,
     })
     .subscribe(async (value: FetchResult) => {
-      console.log(value);
+      console.log('TEST: ', value);
       if (!value.data) {
         return;
       }
 
       const pubSub = getPubSub();
 
-      await pubSub.publish(Topic.STATISTIC_UPDATED, value.data);
+      await pubSub.publish(
+        Topic.STATISTIC_UPDATED,
+        value.data[Topic.STATISTIC_UPDATED],
+      );
     }, console.error);
 }
