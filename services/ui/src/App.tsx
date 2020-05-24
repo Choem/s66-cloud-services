@@ -36,32 +36,31 @@ export function App() {
   } = useQuery(FIND_STATISTIC_BY_ID_QUERY);
 
   // Subscriptions
-  const { loading: isEventStatusChangedLoading } = useSubscription<
-    EventStatusChangedPayload
-  >(EVENTS_STATUS_CHANGED_SUBSCRIPTION, {
-    onSubscriptionData: ({ subscriptionData: { data } }) => {
-      if (data) {
-        const changedEvents = data.EVENTS_STATUS_CHANGED.changedEvents;
-        setEventsState((prevState) => [
-          ...prevState.map((prevEvent) => {
-            const foundIndex = changedEvents.findIndex(
-              (event) => event.id === prevEvent.id
-            );
+  useSubscription<EventStatusChangedPayload>(
+    EVENTS_STATUS_CHANGED_SUBSCRIPTION,
+    {
+      onSubscriptionData: ({ subscriptionData: { data } }) => {
+        if (data) {
+          const changedEvents = data.EVENTS_STATUS_CHANGED.changedEvents;
+          setEventsState((prevState) => [
+            ...prevState.map((prevEvent) => {
+              const foundIndex = changedEvents.findIndex(
+                (event) => event.id === prevEvent.id
+              );
 
-            if (foundIndex === -1) {
-              return prevEvent;
-            }
+              if (foundIndex === -1) {
+                return prevEvent;
+              }
 
-            return { ...prevEvent, ...changedEvents[foundIndex] };
-          }),
-        ]);
-      }
-    },
-  });
+              return { ...prevEvent, ...changedEvents[foundIndex] };
+            }),
+          ]);
+        }
+      },
+    }
+  );
 
-  const { loading: isStatisticUpdatedLoading } = useSubscription<
-    StatisticUpdatedPayload
-  >(STATISTIC_UPDATED_SUBSCRIPTION, {
+  useSubscription<StatisticUpdatedPayload>(STATISTIC_UPDATED_SUBSCRIPTION, {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
         setTotalState(data.STATISTIC_UPDATED.total);
